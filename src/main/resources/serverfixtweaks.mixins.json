@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.norboc.serverfixtweaks.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BeehiveDecoratorMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
