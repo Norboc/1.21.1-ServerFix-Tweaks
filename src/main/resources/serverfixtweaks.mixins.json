@@ -3,8 +3,11 @@
   "minVersion": "0.8.5",
   "package": "com.norboc.serverfixtweaks.mixin",
   "compatibilityLevel": "JAVA_21",
+  "plugin": "com.norboc.serverfixtweaks.plugin.ServerFixTweaksMixinPlugin",
   "mixins": [
-    "BeehiveDecoratorMixin"
+    "BeehiveDecoratorMixin",
+    "sable.AbstractContraptionEntitySableMixin",
+    "sable.MassTrackerMixin"
   ],
   "client": [],
   "server": [],

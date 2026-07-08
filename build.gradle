@@ -16,6 +16,28 @@ java {
     }
 }
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
+}
+
+dependencies {
+    // Sable classes are referenced from the mixins in com.norboc.serverfixtweaks.mixin.sable.
+    // Also placed on the dev runtime classpath (together with Create below) so runServer
+    // boots the real Create + Sable stack and proves those mixins apply cleanly.
+    implementation "maven.modrinth:sable:${sable_version}"
+    runtimeOnly "maven.modrinth:create:${create_version}"
+}
+
 neoForge {
     version = project.neo_version
 
