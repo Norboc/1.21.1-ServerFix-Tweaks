@@ -15,9 +15,13 @@ import java.util.Set;
  * Create-compat crash, members Sable's own mixin adds to Create's contraption entity). They
  * must not be applied when Sable is absent — Create's {@code AbstractContraptionEntity}
  * would still load, and the shadowed {@code sable$}-members would not exist.
+ *
+ * <p>Mixins under {@code com.norboc.serverfixtweaks.mixin.create} patch Create itself and
+ * only require Create.
  */
 public final class ServerFixTweaksMixinPlugin implements IMixinConfigPlugin {
     private static final String SABLE_MIXIN_PACKAGE = "com.norboc.serverfixtweaks.mixin.sable.";
+    private static final String CREATE_MIXIN_PACKAGE = "com.norboc.serverfixtweaks.mixin.create.";
     private static final String CREATE_CLASS_PREFIX = "com.simibubi.create.";
 
     @Override
@@ -29,6 +33,9 @@ public final class ServerFixTweaksMixinPlugin implements IMixinConfigPlugin {
             if (targetClassName.startsWith(CREATE_CLASS_PREFIX) && !isModLoaded("create")) {
                 return false;
             }
+        }
+        if (mixinClassName.startsWith(CREATE_MIXIN_PACKAGE)) {
+            return isModLoaded("create");
         }
         return true;
     }
