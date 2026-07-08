@@ -6,6 +6,7 @@
   "plugin": "com.norboc.serverfixtweaks.plugin.ServerFixTweaksMixinPlugin",
   "mixins": [
     "BeehiveDecoratorMixin",
+    "create.ContinuousOBBColliderMixin",
     "sable.AbstractContraptionEntitySableMixin",
     "sable.MassTrackerMixin"
   ],

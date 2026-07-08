@@ -11,6 +11,7 @@ public final class ServerFixTweaksConfig {
 
     private static final ModConfigSpec.BooleanValue FIX_BEEHIVE_DECORATOR_CRASH;
     private static final ModConfigSpec.BooleanValue FIX_SABLE_EMPTY_CONTRAPTION_CRASH;
+    private static final ModConfigSpec.BooleanValue FIX_CREATE_COLLISION_NULL_AXIS_CRASH;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -38,6 +39,19 @@ public final class ServerFixTweaksConfig {
                         "when Sable and Create are installed.")
                 .define("fixSableEmptyContraptionCrash", true);
 
+        FIX_CREATE_COLLISION_NULL_AXIS_CRASH = builder
+                .comment(
+                        "Prevents a NullPointerException crash-loop in Create's contraption collision",
+                        "maths (https://github.com/Creators-of-Create/Create/issues/10218,",
+                        "duplicate #10479). When an entity's collision box centre coincides exactly",
+                        "with a contraption collider's centre (typical for item drops spawned at",
+                        "block centres by drills on pulleys, bearing tree farms, ...), Create's",
+                        "separation manifold never assigns a separation axis but still reports a",
+                        "collision, then dereferences the null axis. When enabled, such degenerate",
+                        "colliders contribute a zero collision response instead of crashing.",
+                        "Only takes effect when Create is installed.")
+                .define("fixCreateCollisionNullAxisCrash", true);
+
         builder.pop();
 
         SPEC = builder.build();
@@ -54,5 +68,10 @@ public final class ServerFixTweaksConfig {
     public static boolean fixSableEmptyContraptionCrash() {
         // Fail safe: if a contraption somehow ticks before the config loads, keep the fix active.
         return !SPEC.isLoaded() || FIX_SABLE_EMPTY_CONTRAPTION_CRASH.get();
+    }
+
+    public static boolean fixCreateCollisionNullAxisCrash() {
+        // Fail safe: if collisions somehow run before the config loads, keep the fix active.
+        return !SPEC.isLoaded() || FIX_CREATE_COLLISION_NULL_AXIS_CRASH.get();
     }
 }
