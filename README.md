@@ -11,6 +11,7 @@ individual fixes can be enabled or disabled without removing the mod.
 | Fix | Config key | Default | Branch |
 |-----|------------|---------|--------|
 | Beehive tree decorator crash — vanilla `BeehiveDecorator.place()` reads `logs.get(0)` without an empty check, so modded trees that record no log blocks crash worldgen with `IndexOutOfBoundsException` | `fixes.fixBeehiveDecoratorCrash` | `true` | `fix/beehive-decorator-crash` |
+| Sable empty-contraption crash ([ryanhcode/sable#1315](https://github.com/ryanhcode/sable/issues/1315)) — Sable builds physics properties for Create contraptions without null-checking the bounding box or centre of mass, so a contraption with no solid blocks `NullPointerException`-crash-loops the server on its first tick. Guards both spots so Sable's own empty-contraption path handles them. Written against Sable 2.x (verified on 2.0.3) + Create 6.0.10; only applies when both are installed | `fixes.fixSableEmptyContraptionCrash` | `true` | `fix/sable-empty-contraption-crash` |
 
 ## Development
 

@@ -10,6 +10,7 @@ public final class ServerFixTweaksConfig {
     public static final ModConfigSpec SPEC;
 
     private static final ModConfigSpec.BooleanValue FIX_BEEHIVE_DECORATOR_CRASH;
+    private static final ModConfigSpec.BooleanValue FIX_SABLE_EMPTY_CONTRAPTION_CRASH;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -25,6 +26,18 @@ public final class ServerFixTweaksConfig {
                         "skipped for such trees and no bee nest spawns on them.")
                 .define("fixBeehiveDecoratorCrash", true);
 
+        FIX_SABLE_EMPTY_CONTRAPTION_CRASH = builder
+                .comment(
+                        "Prevents a NullPointerException crash-loop when a Create contraption that",
+                        "contains no solid blocks is assembled with Sable installed",
+                        "(https://github.com/ryanhcode/sable/issues/1315). Sable builds physics",
+                        "properties for the contraption without null-checking its bounding box or",
+                        "centre of mass, crashing the server on the contraption's first tick and",
+                        "making the world unloadable. When enabled, such contraptions skip Sable's",
+                        "physics setup via Sable's own empty-contraption path. Only takes effect",
+                        "when Sable and Create are installed.")
+                .define("fixSableEmptyContraptionCrash", true);
+
         builder.pop();
 
         SPEC = builder.build();
@@ -36,5 +49,10 @@ public final class ServerFixTweaksConfig {
     public static boolean fixBeehiveDecoratorCrash() {
         // Fail safe: if worldgen somehow runs before the config loads, keep the fix active.
         return !SPEC.isLoaded() || FIX_BEEHIVE_DECORATOR_CRASH.get();
+    }
+
+    public static boolean fixSableEmptyContraptionCrash() {
+        // Fail safe: if a contraption somehow ticks before the config loads, keep the fix active.
+        return !SPEC.isLoaded() || FIX_SABLE_EMPTY_CONTRAPTION_CRASH.get();
     }
 }
