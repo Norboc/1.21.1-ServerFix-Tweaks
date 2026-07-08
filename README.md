@@ -10,7 +10,7 @@ individual fixes can be enabled or disabled without removing the mod.
 
 | Fix | Config key | Default | Branch |
 |-----|------------|---------|--------|
-| _(none yet)_ | | | |
+| Beehive tree decorator crash — vanilla `BeehiveDecorator.place()` reads `logs.get(0)` without an empty check, so modded trees that record no log blocks crash worldgen with `IndexOutOfBoundsException` | `fixes.fixBeehiveDecoratorCrash` | `true` | `fix/beehive-decorator-crash` |
 
 ## Development
 
