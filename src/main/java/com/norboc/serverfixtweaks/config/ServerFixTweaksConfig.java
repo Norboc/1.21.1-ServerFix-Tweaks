@@ -12,6 +12,7 @@ public final class ServerFixTweaksConfig {
     private static final ModConfigSpec.BooleanValue FIX_BEEHIVE_DECORATOR_CRASH;
     private static final ModConfigSpec.BooleanValue FIX_SABLE_EMPTY_CONTRAPTION_CRASH;
     private static final ModConfigSpec.BooleanValue FIX_CREATE_COLLISION_NULL_AXIS_CRASH;
+    private static final ModConfigSpec.BooleanValue FIX_SABLE_VOXEL_CACHE_RACE_CRASH;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -52,6 +53,17 @@ public final class ServerFixTweaksConfig {
                         "Only takes effect when Create is installed.")
                 .define("fixCreateCollisionNullAxisCrash", true);
 
+        FIX_SABLE_VOXEL_CACHE_RACE_CRASH = builder
+                .comment(
+                        "Prevents an ArrayIndexOutOfBoundsException crash-loop in Sable's block",
+                        "solidity cache (https://github.com/ryanhcode/sable/issues/1292). Sable",
+                        "memoizes per-BlockState solidity in unsynchronized hash maps shared by all",
+                        "threads; concurrent block updates (e.g. server thread + client thread in",
+                        "single player) silently corrupt the maps until a rehash throws, after which",
+                        "every block update crashes and the world becomes unloadable. When enabled,",
+                        "cache accesses are synchronized. Only takes effect when Sable is installed.")
+                .define("fixSableVoxelCacheRaceCrash", true);
+
         builder.pop();
 
         SPEC = builder.build();
@@ -73,5 +85,10 @@ public final class ServerFixTweaksConfig {
     public static boolean fixCreateCollisionNullAxisCrash() {
         // Fail safe: if collisions somehow run before the config loads, keep the fix active.
         return !SPEC.isLoaded() || FIX_CREATE_COLLISION_NULL_AXIS_CRASH.get();
+    }
+
+    public static boolean fixSableVoxelCacheRaceCrash() {
+        // Fail safe: if a block update somehow runs before the config loads, keep the fix active.
+        return !SPEC.isLoaded() || FIX_SABLE_VOXEL_CACHE_RACE_CRASH.get();
     }
 }
