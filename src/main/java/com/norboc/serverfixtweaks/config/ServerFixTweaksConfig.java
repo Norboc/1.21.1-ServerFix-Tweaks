@@ -57,11 +57,15 @@ public final class ServerFixTweaksConfig {
                 .comment(
                         "Prevents an ArrayIndexOutOfBoundsException crash-loop in Sable's block",
                         "solidity cache (https://github.com/ryanhcode/sable/issues/1292). Sable",
-                        "memoizes per-BlockState solidity in unsynchronized hash maps shared by all",
-                        "threads; concurrent block updates (e.g. server thread + client thread in",
-                        "single player) silently corrupt the maps until a rehash throws, after which",
-                        "every block update crashes and the world becomes unloadable. When enabled,",
-                        "cache accesses are synchronized. Only takes effect when Sable is installed.")
+                        "memoizes per-BlockState solidity in plain hash maps shared by all threads,",
+                        "via fastutil's computeIfAbsent, which is unsafe against both concurrent",
+                        "access (server + client thread in single player) and reentrant access",
+                        "(the computation runs modded collision-shape code that can trigger nested",
+                        "block changes). Either silently corrupts the maps until a rehash throws,",
+                        "after which every block update crashes and the world becomes unloadable.",
+                        "When enabled, cache accesses are synchronized and the computation is",
+                        "hoisted out of the map operation. Only takes effect when Sable is",
+                        "installed.")
                 .define("fixSableVoxelCacheRaceCrash", true);
 
         builder.pop();
