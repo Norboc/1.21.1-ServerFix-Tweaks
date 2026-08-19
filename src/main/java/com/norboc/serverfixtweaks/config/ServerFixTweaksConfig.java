@@ -30,14 +30,13 @@ public final class ServerFixTweaksConfig {
 
         FIX_SABLE_EMPTY_CONTRAPTION_CRASH = builder
                 .comment(
-                        "Prevents a NullPointerException crash-loop when a Create contraption that",
-                        "contains no solid blocks is assembled with Sable installed",
-                        "(https://github.com/ryanhcode/sable/issues/1315). Sable builds physics",
-                        "properties for the contraption without null-checking its bounding box or",
-                        "centre of mass, crashing the server on the contraption's first tick and",
-                        "making the world unloadable. When enabled, such contraptions skip Sable's",
-                        "physics setup via Sable's own empty-contraption path. Only takes effect",
-                        "when Sable and Create are installed.")
+                        "DEPRECATED - NO-OP. This setting no longer does anything, whatever it is",
+                        "set to. It used to guard against a NullPointerException crash-loop when a",
+                        "Create contraption containing no solid blocks was assembled with Sable",
+                        "installed (https://github.com/ryanhcode/sable/issues/1315). Sable fixed",
+                        "that itself in 2.0.4/2.0.5 (with a wider guard than this mod's), so the",
+                        "mixins behind this toggle have been removed. The key is kept only so that",
+                        "existing config files stay valid; it can be deleted from your config.")
                 .define("fixSableEmptyContraptionCrash", true);
 
         FIX_CREATE_COLLISION_NULL_AXIS_CRASH = builder
@@ -57,15 +56,13 @@ public final class ServerFixTweaksConfig {
                 .comment(
                         "Prevents an ArrayIndexOutOfBoundsException crash-loop in Sable's block",
                         "solidity cache (https://github.com/ryanhcode/sable/issues/1292). Sable",
-                        "memoizes per-BlockState solidity in plain hash maps shared by all threads,",
-                        "via fastutil's computeIfAbsent, which is unsafe against both concurrent",
-                        "access (server + client thread in single player) and reentrant access",
-                        "(the computation runs modded collision-shape code that can trigger nested",
-                        "block changes). Either silently corrupts the maps until a rehash throws,",
+                        "memoizes per-BlockState solidity in plain, unsynchronized hash maps held",
+                        "in static fields and shared by every thread - the server thread and, in",
+                        "single player, the client thread handling the same block change. Two",
+                        "interleaved writes silently corrupt the map until a later rehash throws,",
                         "after which every block update crashes and the world becomes unloadable.",
-                        "When enabled, cache accesses are synchronized and the computation is",
-                        "hoisted out of the map operation. Only takes effect when Sable is",
-                        "installed.")
+                        "When enabled, the memoizer lookups are serialized on the memoizer itself.",
+                        "Only takes effect when Sable is installed.")
                 .define("fixSableVoxelCacheRaceCrash", true);
 
         builder.pop();
@@ -81,8 +78,13 @@ public final class ServerFixTweaksConfig {
         return !SPEC.isLoaded() || FIX_BEEHIVE_DECORATOR_CRASH.get();
     }
 
+    /**
+     * @deprecated no-op. Sable fixed <a href="https://github.com/ryanhcode/sable/issues/1315">#1315</a>
+     *         itself in 2.0.4/2.0.5, and the mixins that read this toggle were removed. The
+     *         config key is retained so existing config files keep validating.
+     */
+    @Deprecated
     public static boolean fixSableEmptyContraptionCrash() {
-        // Fail safe: if a contraption somehow ticks before the config loads, keep the fix active.
         return !SPEC.isLoaded() || FIX_SABLE_EMPTY_CONTRAPTION_CRASH.get();
     }
 

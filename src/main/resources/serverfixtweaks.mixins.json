@@ -7,8 +7,6 @@
   "mixins": [
     "BeehiveDecoratorMixin",
     "create.ContinuousOBBColliderMixin",
-    "sable.AbstractContraptionEntitySableMixin",
-    "sable.MassTrackerMixin",
     "sable.VoxelNeighborhoodStateMemoizerMixin"
   ],
   "client": [],
